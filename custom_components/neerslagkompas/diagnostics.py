@@ -9,6 +9,7 @@ async def async_get_config_entry_diagnostics(hass, entry):
             name: {
                 "last_update_success": coord.last_update_success,
                 "has_fresh_data": coord.current() is not None,
+                "last_error": coord.last_error,
                 "points": len(coord.data.points) if coord.data else 0,
             }
             for name, coord in entry.runtime_data.items()
