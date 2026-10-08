@@ -34,3 +34,22 @@ def test_hdf5_point_and_units():
     assert len(forecast.points) == 25
     assert abs(forecast.points[0].intensity_mm_h - 1.2) < 1e-9
     assert forecast.points[1].intensity_mm_h == 0
+
+def test_http_error_stage_is_available_without_url_logging():
+    from aiohttp import ClientResponseError
+    from custom_components.neerslagkompas.providers.knmi_radar import check_http_status
+
+    class FakeResponse:
+        def raise_for_status(self):
+            raise ClientResponseError(
+                request_info=None, history=(), status=403,
+                message="Do not expose endpoint details"
+            )
+
+    try:
+        check_http_status(FakeResponse(), "list_files")
+    except ClientResponseError as error:
+        assert error.status == 403
+        assert error.neerslagkompas_stage == "list_files"
+    else:
+        raise AssertionError("Expected HTTP error")
