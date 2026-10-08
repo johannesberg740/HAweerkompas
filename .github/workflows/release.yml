@@ -1,0 +1,50 @@
+name: Publish NeerslagKompas release
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: neerslagkompas-release
+  cancel-in-progress: false
+jobs:
+  checks:
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/checks.yml
+  publish:
+    needs: checks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - name: Read release version
+        id: version
+        run: |
+          python - <<'PY'
+          import json, os, re
+          from pathlib import Path
+          version = json.loads(Path("custom_components/neerslagkompas/manifest.json").read_text())["version"]
+          if not re.fullmatch(r"\d+\.\d+\.\d+(?:-(?:alpha|beta|rc)\.\d+)?", version):
+              raise SystemExit("Unsupported release version")
+          with open(os.environ["GITHUB_OUTPUT"], "a") as output:
+              output.write(f"tag=v{version}\n")
+              output.write(f"prerelease={'true' if '-' in version else 'false'}\n")
+          PY
+      - name: Publish tested commit as a tagged release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+          PRERELEASE: ${{ steps.version.outputs.prerelease }}
+        run: |
+          args=()
+          if [ "$PRERELEASE" = "true" ]; then
+            args+=(--prerelease --latest=false)
+          fi
+          gh release create "$RELEASE_TAG" --target "$GITHUB_SHA" \
+            --title "NeerslagKompas $RELEASE_TAG" --generate-notes "${args[@]}"
