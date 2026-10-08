@@ -73,8 +73,6 @@ async def _on_options_update(hass, entry):
     await hass.config_entries.async_reload(entry.entry_id)
 
 
-async def async_unload_entry(hass, entry):
-    success = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
-    if success:
-        entry.async_unload()
-    return success
+async def async_unload_entry(hass, entry) -> bool:
+    """Unload entity platforms; Home Assistant runs entry unload callbacks."""
+    return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
