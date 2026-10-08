@@ -1,13 +1,15 @@
 {
   "domain": "neerslagkompas",
   "name": "NeerslagKompas",
-  "version": "0.1.0-alpha.1",
+  "codeowners": [],
   "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/johannesberg740/HAweerkompas",
   "integration_type": "service",
   "iot_class": "cloud_polling",
-  "documentation": "https://github.com/johannesberg740/HAweerkompas",
   "issue_tracker": "https://github.com/johannesberg740/HAweerkompas/issues",
-  "codeowners": [],
-  "requirements": ["h5py==3.15.1"],
-  "dependencies": []
+  "requirements": [
+    "h5py==3.15.1"
+  ],
+  "version": "0.1.0-alpha.1"
 }
