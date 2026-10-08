@@ -1,0 +1,89 @@
+{
+  "liveweer": [
+    {
+      "plaats": "Amsterdam",
+      "timestamp": 1754137084,
+      "time": "02-08-2025 14:18:04",
+      "temp": 19.1,
+      "gtemp": 16.5,
+      "samenv": "Zwaar bewolkt",
+      "lv": 70,
+      "windr": "NNW",
+      "windrgr": 312.5,
+      "windms": 7.94,
+      "windbft": 4,
+      "windknp": 15.4,
+      "windkmh": 28.6,
+      "luchtd": 1014.41,
+      "ldmmhg": 761,
+      "dauwp": 13.5,
+      "zicht": 34100,
+      "gr": 652,
+      "verw": "Geleidelijk afnemende buiigheid",
+      "sup": "06:01",
+      "sunder": "21:32",
+      "image": "bewolkt",
+      "alarm": 0,
+      "lkop": "Er zijn geen waarschuwingen",
+      "ltekst": " Er zijn momenteel geen waarschuwingen van kracht.",
+      "wrschklr": "groen",
+      "wrsch_g": "-",
+      "wrsch_gts": 0,
+      "wrsch_gc": "-"
+    }
+  ],
+  "wk_verw": [
+    {
+      "dag": "02-08-2025",
+      "image": "halfbewolkt",
+      "max_temp": 20,
+      "min_temp": 15,
+      "windbft": 3,
+      "windkmh": 18,
+      "windknp": 10,
+      "windms": 5,
+      "windrgr": 310,
+      "windr": "NW",
+      "neersl_perc_dag": 50,
+      "zond_perc_dag": 49
+    }
+  ],
+  "uur_verw": [
+    {
+      "uur": "02-08-2025 14:00",
+      "timestamp": 1754136000,
+      "image": "bewolkt",
+      "temp": 20,
+      "windbft": 4,
+      "windkmh": 21,
+      "windknp": 12,
+      "windms": 6,
+      "windrgr": 316,
+      "windr": "NW",
+      "neersl": 0,
+      "gr": 704
+    },
+    {
+      "uur": "02-08-2025 15:00",
+      "timestamp": 1754139600,
+      "image": "bewolkt",
+      "temp": 20,
+      "windbft": 4,
+      "windkmh": 21,
+      "windknp": 12,
+      "windms": 6,
+      "windrgr": 314,
+      "windr": "NW",
+      "neersl": 0,
+      "gr": 504
+    }
+  ],
+  "api": [
+    {
+      "bron": "Bron: Weerdata KNMI/NOAA via Weerlive.nl",
+      "disclaimer": "Deze API is alleen voor studie en hobby, professioneel gebruik via meteoserver.nl",
+      "max_verz": 300,
+      "rest_verz": 0
+    }
+  ]
+}

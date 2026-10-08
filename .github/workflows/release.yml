@@ -1,5 +1,9 @@
 name: Publish NeerslagKompas release
 on:
+  push:
+    branches: [main]
+    paths:
+      - custom_components/neerslagkompas/manifest.json
   workflow_dispatch:
 permissions:
   contents: read
