@@ -14,6 +14,16 @@ from ..models import RainPoint, SourceData
 
 API = "https://api.dataplatform.knmi.nl/open-data/v1/datasets/radar_forecast/versions/2.0/files"
 MAX_DOWNLOAD = 48 * 1024 * 1024
+
+def check_http_status(response, stage: str) -> None:
+    """Preserve HTTP status and safe stage only, never URLs or credentials."""
+    from aiohttp import ClientResponseError
+    try:
+        response.raise_for_status()
+    except ClientResponseError as error:
+        error.neerslagkompas_stage = stage
+        raise
+
 RADIUS_MAJOR_KM = 6378.14
 RADIUS_MINOR_KM = 6356.75
 GEO_ROW_OFFSET = 3649.98193359375
@@ -97,7 +107,7 @@ class KnmiRadarClient:
         async with self.session.get(
             API, headers=headers, params=params, timeout=20
         ) as response:
-            response.raise_for_status()
+            check_http_status(response, "list_files")
             file_list = await response.json()
         files = file_list.get("files") or []
         if not files or "filename" not in files[0]:
@@ -113,14 +123,14 @@ class KnmiRadarClient:
         async with self.session.get(
             url, headers=headers, timeout=20
         ) as response:
-            response.raise_for_status()
+            check_http_status(response, "get_download_url")
             payload = await response.json()
         signed_url = payload.get("temporaryDownloadUrl")
         if not signed_url or not signed_url.startswith("https://"):
             raise ValueError("KNMI did not provide a secure file URL")
         content = bytearray()
         async with self.session.get(signed_url, timeout=60) as response:
-            response.raise_for_status()
+            check_http_status(response, "download_radar_file")
             async for chunk in response.content.iter_chunked(256 * 1024):
                 content.extend(chunk)
                 if len(content) > MAX_DOWNLOAD:
