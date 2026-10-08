@@ -1,55 +1,73 @@
-"""KNMI-derived weather through Weerlive v2: hourly and daily context."""
+"""KNMI-derived Weerlive forecasts using the upstream maintained API client.
+
+Reuse the Weerlive client already used by golles/ha-knmi rather than
+reimplementing the response transport, decoding, rate limits and error mapping.
+Only translate typed upstream models into NeerslagKompas's stable data model.
+"""
 from __future__ import annotations
+
 from datetime import datetime, timezone
+from math import isfinite
+
+from weerlive import Response, WeerliveApi
+
 from ..models import RainPoint, SourceData
 
-URL = "https://weerlive.nl/api/weerlive_api_v2.php"
 
+def parse(response: Response, received_at: datetime) -> SourceData:
+    """Normalize typed Weerlive results; preserve hourly/nowcast distinction."""
+    if not isinstance(response, Response):
+        raise ValueError("Unexpected Weerlive response type")
 
-def parse(payload: dict, received_at: datetime) -> SourceData:
-    if not isinstance(payload, dict):
-        raise ValueError("Malformed Weerlive response")
-    raw_hours = payload.get("uurverwachting") or []
-    live = (payload.get("liveweer") or [{}])[0]
-    hours = []
-    for item in raw_hours:
-        if item.get("timestamp") is None or item.get("neersl") is None:
+    hourly = []
+    for forecast in response.hourly_forecast:
+        precipitation = forecast.precipitation
+        if not isfinite(precipitation) or precipitation < 0:
             continue
-        try:
-            value = float(item["neersl"])
-            if value < 0:
-                continue
-            hours.append(
-                RainPoint(
-                    datetime.fromtimestamp(int(item["timestamp"]), timezone.utc),
-                    value, 60
-                )
+        hourly.append(
+            RainPoint(
+                datetime.fromtimestamp(forecast.timestamp, tz=timezone.utc),
+                float(precipitation),
+                interval_minutes=60,
             )
-        except (TypeError, ValueError, OverflowError):
-            continue
-    if not isinstance(live, dict) or not live and not hours:
-        raise ValueError("No useful Weerlive response")
+        )
+
+    daily = tuple(
+        {
+            "date": forecast.day.date().isoformat()
+            if forecast.day else None,
+            "precipitation_probability_percent": (
+                forecast.precipitation_probability
+            ),
+        }
+        for forecast in response.daily_forecast
+    )
+    if not hourly and not daily and not response.live.forecast:
+        raise ValueError("Weerlive returned no usable weather information")
+
+    observed_at = datetime.fromtimestamp(
+        response.live.timestamp, tz=timezone.utc
+    )
     return SourceData(
-        "weerlive", "hourly", received_at, description=live.get("verw"),
-        hourly=tuple(hours), daily=tuple(payload.get("dagverwachting") or []),
-        attribution="KNMI via Weerlive.nl (https://weerlive.nl/delen.php)",
+        source="weerlive",
+        kind="hourly",
+        received_at=received_at,
+        description=response.live.forecast,
+        hourly=tuple(hourly),
+        daily=daily,
+        observed_at=observed_at,
+        attribution="Weather data KNMI/NOAA via Weerlive.nl",
     )
 
 
 class WeerliveClient:
-    def __init__(self, session, key: str):
-        self.session, self.key = session, key
+    """Thin adapter around the upstream WeerliveApi library."""
+
+    def __init__(self, session, key: str) -> None:
+        self._client = WeerliveApi(key, session)
 
     async def async_fetch(
         self, latitude: float, longitude: float, now: datetime
     ) -> SourceData:
-        params = {
-            "key": self.key,
-            "locatie": f"{latitude:.6f},{longitude:.6f}",
-        }
-        async with self.session.get(
-            URL, params=params, timeout=15
-        ) as response:
-            response.raise_for_status()
-            payload = await response.json(content_type=None)
-        return parse(payload, now)
+        response = await self._client.latitude_longitude(latitude, longitude)
+        return parse(response, now)

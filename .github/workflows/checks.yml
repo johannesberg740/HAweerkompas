@@ -9,8 +9,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.13"
-      - run: python -m pip install pytest h5py aiohttp
+          python-version: "3.14"
+      - run: python -m pip install pytest h5py aiohttp weerlive-api==0.2.4
       - run: python -m pytest -q tests
       - run: python -m compileall -q custom_components/neerslagkompas
   hassfest:
