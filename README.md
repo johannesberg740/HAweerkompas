@@ -2,7 +2,7 @@
 
 Zelfstandige Home Assistant-integratie voor lokale neerslagvoorspellingen met Buienradar, Buienalarm en officiële KNMI-radar. Deze repository heet **HAweerkompas**; de integration domain is `neerslagkompas`.
 
-**Status: 0.1.0-alpha.1. Experimenteel, nog niet live gevalideerd op Home Assistant OS 2026.10.1.** Niet gebruiken als enige bron voor veiligheidskritische automatiseringen.
+**Status: 0.1.0-alpha.2. Experimenteel, vereist Home Assistant 2026.10.0 of hoger; nog niet live gevalideerd.** Niet gebruiken als enige bron voor veiligheidskritische automatiseringen.
 
 ## Via HACS installeren
 
@@ -14,6 +14,12 @@ Zelfstandige Home Assistant-integratie voor lokale neerslagvoorspellingen met Bu
 6. Controleer bronstatussen en sensoren. Bij ontbrekende gegevens moet `unavailable` verschijnen, niet "droog".
 
 Bij een **private repository** kan HACS geen toegang hebben. In dat geval pas publiek maken na de controle van API-gebruiksvoorwaarden of voorlopig handmatig installeren. Er staan geen API-sleutels in de broncode.
+
+## API-sleutels aanvragen en configureren
+
+**KNMI Data Platform en Weerlive staan standaard uit.** Alleen als je zelf een sleutel invult, wordt de betreffende bron actief. Alle sleutels worden uitsluitend in je eigen Home Assistant-configuratie opgeslagen, niet op GitHub. Gebruik verschillende sleutels voor KNMI Open Data en Weerlive.
+
+Bekijk de **[stap-voor-stap handleiding voor API-sleutels](docs/api-keys.md)** met officiële aanvraaglinks en uitleg hoe je de sleutels toevoegt via **Instellingen → Apparaten en diensten → NeerslagKompas → Configureren**. Een al opgeslagen sleutel blijft bij een update behouden. We vragen nooit om sleutels in Issues of screenshots.
 
 ## Providers
 
@@ -38,13 +44,41 @@ KNMI-radar is vanaf deze alpha geïmplementeerd, maar **nog niet met echte KNMI-
 
 ## Ontwikkeling
 
+Gebruik Python 3.14: `weerlive-api==0.2.4` vereist Python 3.14 en Home Assistant Core 2026.10.0 draait op Python 3.14.
+
+
 ```shell
-python -m pip install pytest h5py
+python -m pip install -r requirements-dev.txt
 python -m pytest -q tests
 python -m compileall -q custom_components/neerslagkompas
 ```
 
 Zie [ARCHITECTURE.md](ARCHITECTURE.md) voor technische keuzes, tekortkomingen en verbeterstappen.
+
+## Updates en releases via HACS
+
+Gebruik een gepubliceerde versie, bijvoorbeeld `v0.1.0-alpha.2`, voor updates.
+Schakel in HACS indien nodig de weergave van beta-/prereleases in om alpha-versies
+te kunnen selecteren. Zonder releases kan de echte standaardbranch `main` worden
+gebruikt. Selecteer geen korte commit-SHA als branch: `archive/refs/heads/c88ecef.zip`
+verwijst naar een branch met die naam en levert 404 op als die niet bestaat.
+
+Voor beheerders:
+
+1. Verhoog `version` in `custom_components/neerslagkompas/manifest.json` via een PR.
+2. Laat tests op Python 3.14 en hassfest slagen en merge de PR naar `main`.
+3. Start **Actions → Publish NeerslagKompas release → Run workflow** op `main`.
+   De workflow controleert dezelfde commit opnieuw en publiceert pas daarna een
+   tag en GitHub Release met de manifestversie. Alpha/beta/rc blijven prereleases.
+4. Bestaande versies worden niet overschreven; verhoog de versie voor de volgende
+   release. HACS gebruikt het standaard GitHub-tagarchief; een eigen zipbestand
+   of `zip_release`-instelling is niet nodig.
+
+Bij een mislukte SHA-download: vernieuw de repository-informatie in HACS en kies
+een gepubliceerde tag, of tijdelijk de branch `main`, via opnieuw downloaden.
+Herstart daarna Home Assistant. Verwijder de NeerslagKompas-configuratie niet:
+updaten behoudt bestaande config entries, API-sleutels, opties en entity IDs.
+Deze versie behoudt bestaande unique IDs, sensornamen en API-sleutels. De Weerlive-bron gebruikt voortaan de onderhouden `weerlive-api` Python-bibliotheek.
 
 ## Privacy en bronvermelding
 

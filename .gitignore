@@ -1,8 +1,14 @@
 __pycache__/
 .pytest_cache/
-*.pyc
+*.py[cod]
 .venv/
 .env
+.env.*
+!.env.example
 *.h5
+*.secrets
 .secrets
+secrets.yaml
+.storage/
+config/.storage/
 .DS_Store
