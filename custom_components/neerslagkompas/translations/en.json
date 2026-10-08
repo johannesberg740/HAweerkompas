@@ -1,0 +1,46 @@
+{
+  "title": "NeerslagKompas",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up NeerslagKompas",
+        "data": {
+          "name": "Location name",
+          "track_home": "Follow Home Assistant home location",
+          "latitude": "Manual latitude",
+          "longitude": "Manual longitude",
+          "buienradar_enabled": "Enable Buienradar",
+          "buienalarm_enabled": "Enable Buienalarm (experimental endpoint)",
+          "knmi_key": "KNMI Data Platform API key (optional)",
+          "weerlive_key": "Weerlive API key (optional)"
+        }
+      }
+    },
+    "error": {
+      "invalid_location": "Invalid coordinates"
+    },
+    "abort": {
+      "home_already_configured": "Home location is already configured"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "NeerslagKompas settings",
+        "data": {
+          "name": "Location name",
+          "track_home": "Follow home location",
+          "latitude": "Latitude",
+          "longitude": "Longitude",
+          "buienradar_enabled": "Enable Buienradar",
+          "buienalarm_enabled": "Enable Buienalarm",
+          "knmi_key": "New KNMI key (leave empty to retain)",
+          "weerlive_key": "New Weerlive key (leave empty to retain)"
+        }
+      }
+    },
+    "error": {
+      "invalid_location": "Invalid coordinates"
+    }
+  }
+}

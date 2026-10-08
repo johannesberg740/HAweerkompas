@@ -1,0 +1,46 @@
+{
+  "title": "NeerslagKompas",
+  "config": {
+    "step": {
+      "user": {
+        "title": "NeerslagKompas instellen",
+        "data": {
+          "name": "Naam van de locatie",
+          "track_home": "Home Assistant-thuislocatie automatisch volgen",
+          "latitude": "Handmatige breedtegraad",
+          "longitude": "Handmatige lengtegraad",
+          "buienradar_enabled": "Buienradar inschakelen",
+          "buienalarm_enabled": "Buienalarm inschakelen (experimentele API)",
+          "knmi_key": "KNMI Data Platform API-sleutel (optioneel)",
+          "weerlive_key": "Weerlive API-sleutel (optioneel)"
+        }
+      }
+    },
+    "error": {
+      "invalid_location": "Ongeldige coördinaten"
+    },
+    "abort": {
+      "home_already_configured": "Thuislocatie is al ingesteld"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "NeerslagKompas instellingen",
+        "data": {
+          "name": "Naam van de locatie",
+          "track_home": "Thuislocatie automatisch volgen",
+          "latitude": "Breedtegraad",
+          "longitude": "Lengtegraad",
+          "buienradar_enabled": "Buienradar inschakelen",
+          "buienalarm_enabled": "Buienalarm inschakelen",
+          "knmi_key": "Nieuwe KNMI-sleutel (leeg = behouden)",
+          "weerlive_key": "Nieuwe Weerlive-sleutel (leeg = behouden)"
+        }
+      }
+    },
+    "error": {
+      "invalid_location": "Ongeldige coördinaten"
+    }
+  }
+}
