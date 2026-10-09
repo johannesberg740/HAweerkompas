@@ -12,7 +12,7 @@ from custom_components.neerslagkompas.providers.knmi_radar import (
 NOW = datetime(2026, 10, 9, 17, 45, tzinfo=timezone.utc)
 
 
-def _fixture(first=100, second=65534, third=65535, calibration="GEO=0.010000*PV+0.000000"):
+def _fixture(first=100, second=65534, third=65535, calibration="GEO=0.010000*PV+0.000000", all_missing=False):
     output = BytesIO()
     with h5py.File(output, "w") as f:
         geo = f.create_group("geographic")
@@ -38,7 +38,7 @@ def _fixture(first=100, second=65534, third=65535, calibration="GEO=0.010000*PV+
             at = NOW + timedelta(minutes=(index - 1) * 5)
             group.attrs["image_datetime_valid"] = at.strftime("%d-%b-%Y;%H:%M:%S.000")
             raster = group.create_dataset("image_data", (765, 700), dtype="u2", fillvalue=0)
-            raster[row, col] = {1: first, 2: second, 3: third}.get(index, 0)
+            raster[row, col] = {1: first, 2: second, 3: third}.get(index, 65534 if all_missing else 0)
             cal = group.create_group("calibration")
             cal.attrs.update({
                 "calibration_flag": "Y",
@@ -64,7 +64,7 @@ def test_parse_calibration_and_skip_both_missing_codes():
 
 def test_missing_only_is_unavailable_not_dry():
     with pytest.raises(ValueError, match="Missing or stale"):
-        parse_hdf5(_fixture(first=65534, second=65534, third=65535), 52.71, 5.75, NOW)
+        parse_hdf5(_fixture(first=65534, second=65534, third=65535, all_missing=True), 52.71, 5.75, NOW)
 
 
 def test_reject_unknown_calibration():
