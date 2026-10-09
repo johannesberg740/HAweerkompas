@@ -6,6 +6,7 @@ from homeassistant.helpers.entity import DeviceInfo
 
 from .const import DOMAIN, SOURCE_INTERVALS
 from .engine import assess
+from .forecast_series import forecast_points
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
@@ -106,9 +107,20 @@ class SourceHealthSensor(BaseSensor):
 
     @property
     def extra_state_attributes(self):
-        data = self.coord.data if self.coord else None
+        from . import current_location
+
+        now = datetime.now(timezone.utc)
+        data = self.coord.current() if self.coord else None
+        latitude, longitude = current_location(self.hass, self.entry)
+        series = forecast_points(data, now)
         return {
             "last_received": data.received_at.isoformat() if data else None,
             "attribution": data.attribution if data else None,
             "point_count": len(data.points) if data else 0,
+            "forecast_points": series,
+            "forecast_start": series[0]["datetime"] if series else None,
+            "forecast_end": series[-1]["datetime"] if series else None,
+            "latitude": round(latitude, 5),
+            "longitude": round(longitude, 5),
+            "spatial_resolution_km": 1 if self.source == "knmi_radar" and data else None,
         }
