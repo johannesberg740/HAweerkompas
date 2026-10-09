@@ -2,7 +2,7 @@
 
 Zelfstandige Home Assistant-integratie voor lokale neerslagvoorspellingen met Buienradar, Buienalarm en officiële KNMI-radar. Deze repository heet **HAweerkompas**; de integration domain is `neerslagkompas`.
 
-**Status: 0.1.0-alpha.2. Experimenteel, vereist Home Assistant 2026.10.0 of hoger; nog niet live gevalideerd.** Niet gebruiken als enige bron voor veiligheidskritische automatiseringen.
+**Status: 0.1.0-alpha.3. Experimenteel, vereist Home Assistant 2026.10.0 of hoger; met KNMI HDF5-bestand van 9 oktober 2026 gevalideerd; volledige HAOS-end-to-end verificatie volgt.** Niet gebruiken als enige bron voor veiligheidskritische automatiseringen.
 
 ## Via HACS installeren
 
@@ -30,7 +30,7 @@ Bekijk de **[stap-voor-stap handleiding voor API-sleutels](docs/api-keys.md)** m
 | KNMI Open Data `radar_forecast/2.0` | Officiële radarnowcast | Eigen API-sleutel vereist |
 | KNMI via Weerlive.nl | Langere uur-/dagcontext | Eigen Weerlive-sleutel vereist |
 
-KNMI-radar is vanaf deze alpha geïmplementeerd, maar **nog niet met echte KNMI-radarbestanden bevestigd**. De HDF5-parser en locatieprojectie gebruiken een synthetische testfixture; valideer op HAOS voor gebruik in productie.
+KNMI-radar is getoetst aan de projectie, rastergeometrie en kalibratiemetadata van een werkelijk KNMI HDF5-bestand van 9 oktober 2026. De integratie gebruikt de LU-pixelconventie en slaat zowel ontbrekende (65534) als buitenbeeldwaarden (65535) over; zulke waarden zijn geen nulmetingen. Invoer blijft een voorspelling, geen waarneming. Verificatie op HAOS blijft nodig.
 
 ## Functionaliteit alpha
 
@@ -57,7 +57,7 @@ Zie [ARCHITECTURE.md](ARCHITECTURE.md) voor technische keuzes, tekortkomingen en
 
 ## Updates en releases via HACS
 
-Gebruik een gepubliceerde versie, bijvoorbeeld `v0.1.0-alpha.2`, voor updates.
+Gebruik een gepubliceerde versie, bijvoorbeeld `v0.1.0-alpha.3`, voor updates.
 Schakel in HACS indien nodig de weergave van beta-/prereleases in om alpha-versies
 te kunnen selecteren. Zonder releases kan de echte standaardbranch `main` worden
 gebruikt. Selecteer geen korte commit-SHA als branch: `archive/refs/heads/c88ecef.zip`
