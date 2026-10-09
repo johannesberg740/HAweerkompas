@@ -15,7 +15,7 @@
 
 ## KNMI radar
 
-`radar_forecast/2.0` wordt via de KNMI Data Platform bestanden-API gedownload. De implementatie gebruikt HDF5, beeldgroepen en een polaire stereografische kaartprojectie. Cijfers in het raster staan in honderdsten mm per vijf minuten; voor mm/uur worden deze met 12 vermenigvuldigd. **Datasetmetadata, binaire wheel, maximale downloadbelasting en projectienauwkeurigheid moeten nog met een echt KNMI v2-bestand getest worden.** Bij een onbekend format wordt geen resultaat gepubliceerd.
+`radar_forecast/2.0` wordt via de KNMI Data Platform bestanden-API gedownload. De implementatie gebruikt HDF5, beeldgroepen en een polaire stereografische kaartprojectie. Cijfers in het raster staan in honderdsten mm per vijf minuten; voor mm/uur worden deze met 12 vermenigvuldigd. **De rastergeometrie, projectie (LU-pixeldefinitie), bestandsstructuur en kalibratie zijn getoetst aan een werkelijk KNMI-bestand van 9 oktober 2026.** De rastercel wordt met floor bepaald in plaats van nearest-corner afronding. Missing (65534) en outside-of-image (65535) worden uitgesloten en niet als droogte geïnterpreteerd. De h5py-wheel, netwerkbelasting en HAOS-end-to-end verwerking vragen nog praktijktests. Bij een onbekend format wordt geen resultaat gepubliceerd.
 
 ## Known risks before public release
 
